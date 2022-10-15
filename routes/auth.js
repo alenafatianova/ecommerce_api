@@ -20,7 +20,12 @@ const newUser = new User({
         console.log(err)
         throw new Error()
     }
-    
+})
+
+// SIGN IN
+
+router.post("/signin", async (req, res) => {
+   const user = 
 })
 
 module.exports = router
