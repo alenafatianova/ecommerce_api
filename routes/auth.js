@@ -25,7 +25,21 @@ const newUser = new User({
 // SIGN IN
 
 router.post("/signin", async (req, res) => {
-   const user = 
+    try {
+        const user = await User.findOne({username: req.body.username})
+        !user && res.status(401).json("Wrong email or password!")
+        
+        const hashedPassword = cryptoJS.AES.decrypt(user.password, process.env.PASS_SECRET )
+        const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8.parse(user.password))
+        originalPassword !== req.body.password && res.status(401).json("Wrong email or password!")
+
+        const { password, ...others } = user;
+        res.status(200).json(others)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json(err)
+    }
+   
 })
 
 module.exports = router

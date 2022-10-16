@@ -7,7 +7,8 @@ const authRoutes = require('./routes/auth')
 dotenv.config()
 
 const mongoose = require("mongoose")
-mongoose.connect(process.env.MONGO_DB)
+//mongoose.connect(process.env.MONGO_DB)
+mongoose.connect("mongodb+srv://username:11111@cluster0.xr7w8tj.mongodb.net/ecommerce?retryWrites=true&w=majority")
 .then(() => {console.log("DBConnection succesfully!")})
 .catch((error) => {
     console.log(error)
