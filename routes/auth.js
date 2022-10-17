@@ -26,11 +26,17 @@ const newUser = new User({
 
 router.post("/signin", async (req, res) => {
     try {
+        console.log("req", req.body)
         const user = await User.findOne({username: req.body.username})
+        console.log("user", user)
         !user && res.status(401).json("Wrong email or password!")
-        
+
+        console.log("env", process.env)
+        console.log("PASS_SECRET", process.env.PASS_SECRET)
         const hashedPassword = cryptoJS.AES.decrypt(user.password, process.env.PASS_SECRET )
-        const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8.parse(user.password))
+        console.log("hashedPassword", hashedPassword)
+        const originalPassword = hashedPassword.toString(cryptoJS.enc.Utf8)
+        console.log("originalPassword", originalPassword)
         originalPassword !== req.body.password && res.status(401).json("Wrong email or password!")
 
         const { password, ...others } = user;
