@@ -1,6 +1,7 @@
 const User = require("../models/User")
 const router = require("express").Router()
 const cryptoJS = require("crypto-js")
+const jwt = require("jsonwebtoken")
 
 
 // REGISTER
@@ -14,7 +15,6 @@ const newUser = new User({
     try {
         const savedUser = await newUser.save()
         res.status(201).json(savedUser)
-       
     } catch (err) {
         res.status(500).json(err)
         console.log(err)
@@ -23,24 +23,26 @@ const newUser = new User({
 })
 
 // SIGN IN
-
-router.post("/signin", async (req, res) => {
+router.post("/login", async (req, res) => {
     try {
-        console.log("req", req.body)
         const user = await User.findOne({username: req.body.username})
-        console.log("user", user)
         !user && res.status(401).json("Wrong email or password!")
 
-        console.log("env", process.env)
-        console.log("PASS_SECRET", process.env.PASS_SECRET)
         const hashedPassword = cryptoJS.AES.decrypt(user.password, process.env.PASS_SECRET )
-        console.log("hashedPassword", hashedPassword)
         const originalPassword = hashedPassword.toString(cryptoJS.enc.Utf8)
-        console.log("originalPassword", originalPassword)
         originalPassword !== req.body.password && res.status(401).json("Wrong email or password!")
 
-        const { password, ...others } = user;
-        res.status(200).json(others)
+        const accessToken = jwt.sign({
+            id: user._id,
+            isAdmin: user.isAdmin
+        }, 
+            process.env.JWT_SEC,
+            {expiresIn: '1w'}
+        )
+
+        const { password, ...others } = user._doc;
+        res.status(200).json({...others, accessToken})
+        
     } catch (err) {
         console.log(err)
         res.status(500).json(err)
