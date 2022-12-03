@@ -22,8 +22,17 @@ const verifyAndAuth = (req, res, next) => {
         } else {
             res.status(403).json("You don't have an access")
         }
-    })
-    
-}
+    })  
+};
 
-module.exports = { verifyToken, verifyAndAuth }
+const verifyAsAdmin = (req, res, next) => {
+    verifyToken(req, res, () => {
+        if(req.user.isAdmin) {
+            next();
+        } else {
+            res.status(403).json("You don't have an access")
+        }
+    })  
+};
+
+module.exports = { verifyToken, verifyAndAuth, verifyAsAdmin }
