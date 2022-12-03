@@ -3,6 +3,7 @@ const app = express()
 const dotenv = require("dotenv")
 const userRoutes = require('./routes/users')
 const authRoutes = require('./routes/auth')
+const productRoutes = require('./routes/product')
 
 dotenv.config()
 
@@ -18,6 +19,7 @@ mongoose.connect("mongodb+srv://username:11111@cluster0.xr7w8tj.mongodb.net/ecom
 app.use(express.json())
 app.use('/api/users', userRoutes)
 app.use('/api/auth', authRoutes)
+app.use('/api/products', productRoutes)
 
 app.listen(process.env.PORT || 4000, () => {
     console.log("Backend server is running!")
